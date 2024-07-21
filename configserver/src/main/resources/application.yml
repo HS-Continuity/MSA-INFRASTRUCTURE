@@ -1,0 +1,31 @@
+server:
+  port: 8071
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: git
+  cloud:
+    bootstrap:
+      enabled: true
+    config:
+      server:
+        git:
+          uri: https://github.com/kimujae/config
+          username: ENC(2leoNJZ7L26Xt2CMNGwerQ==)
+          password: ENC(XCyxmGj3ZI/LAVEXd6ylpZaP44RjnYV+2wZ+NrEXYSitAOxdd76SPXUmNI7tlrZSAzmsS+jkTdEAmwzq9Js06TIK7hKMkfjgbktHZ3oyQgSfKYHsXuIIinBerDna3irkygVa2X7E9hA=)
+          searchPaths: servicegateway, servicediscovery, productservice, memberservice
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+jasypt:
+  encryptor:
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    algorithm: PBEWithMD5AndDES
+    password: {APP_ENCRYPTION_PASSWORD}

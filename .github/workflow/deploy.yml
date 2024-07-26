@@ -1,10 +1,9 @@
 name: MSA CI with Gradle
 on:
   push:
-    branches: [ "KAN-553--test/배포-자동화-테스트" ]
+    branches: [ "apigateway" ]
 jobs:
   apigateway-build-and-deploy:
-    if: startsWith(github.ref, 'refs/heads/KAN-553--test/배포-자동화-테스트')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +21,6 @@ jobs:
 
       - name: Build with Gradle Wrapper
         working-directory: apigateway
-        env:
-          APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
         run: ./gradlew build
 
 
@@ -38,7 +35,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
 
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.APIGATEWAY_EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22

@@ -24,11 +24,11 @@ jobs:
         working-directory: apigateway
         env:
           APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
-        run: ./gradlew build --continue
+        run: ./gradlew build
 
 
       - name: Build Docker image
-        run: docker build --build -t apigateway .
+        run: docker build -t apigateway .
 
       - name: Save Docker image
         run: docker save apigateway | gzip > apigateway.tar.gz

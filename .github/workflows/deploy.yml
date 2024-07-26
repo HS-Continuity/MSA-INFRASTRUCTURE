@@ -18,11 +18,10 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
 
       - name: Grant execute permission for gradlew
-        run: |
-          cd apigateway
-          chmod +x gradlew
+        run: chmod +x apigateway/gradlew
 
       - name: Build with Gradle Wrapper
+        working-directory: apigateway
         env:
           APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
         run: ./gradlew build

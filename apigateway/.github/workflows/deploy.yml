@@ -26,7 +26,7 @@ jobs:
       - name: Build Docker image
         working-directory: apigateway
 
-        run: docker build -t apigateway .
+        run: docker build -f apigateway/Dockerfile -t apigateway apigateway
 
       - name: Save Docker image
         run: docker save apigateway | gzip > apigateway.tar.gz

@@ -1,0 +1,12 @@
+spring :
+  application :
+    name : servicediscovery  # 컨피그 서버 내에 위치한 주입받을 서비스 컨피그 파일과 매핑 [profiles 정보는 접미사로 붙음]
+  config:
+    import: "optional:configserver:"
+  cloud :
+    config :
+      uri : http://43.201.146.199:8071 # 컨피그 서버 주소
+      # profiles : dev
+    load-balancer :
+      ribbon :
+        enabled : false # 클라이언트 lb 기본값 비활성화

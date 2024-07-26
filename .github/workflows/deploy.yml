@@ -28,6 +28,7 @@ jobs:
 
 
       - name: Build Docker image
+        working-directory : apigateway
         run: docker build -t apigateway .
 
       - name: Save Docker image

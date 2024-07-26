@@ -15,12 +15,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<JwtAuthorizationFilterFactory.Config> {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
     private WebClient.Builder webClientBuilder;
+
     @Autowired
     private Environment env;
 
@@ -49,12 +52,15 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                 }
             }
 
+
             // 인가
-            if(jwtUtils.getRole(jwt).equals(config.getRole())) {
-                return chain.filter(exchange);
-            } else {
-                return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
+            for(String role : config.getRole()) {
+                if (jwtUtils.getRole(jwt).equals(role)) {
+                    return chain.filter(exchange);
+                }
             }
+
+            return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
         };
     }
 
@@ -82,15 +88,15 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
 
     public static class Config {
-        private String role;
-        public Config(String role) {
+        private List<String> role;
+        public Config(List<String> role) {
             this.role = role;
         }
-        public String getRole() {
+        public List<String> getRole() {
             return role;
         }
 
-        public void setRole(String role) {
+        public void setRole(List<String> role) {
             this.role = role;
         }
     }

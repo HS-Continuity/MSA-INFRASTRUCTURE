@@ -1,7 +1,7 @@
 name: Java CI with Gradle
 on:
   push:
-    branches: [ "KAN-553--test/배포자동화-테스트" ]
+    branches: [ "KAN-553--test/배포-자동화-테스트" ]
 jobs:
   apigateway-build-and-deploy:
     if: github.ref == 'refs/heads/KAN-553--test/배포자동화-테스트'

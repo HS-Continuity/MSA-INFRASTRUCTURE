@@ -22,6 +22,8 @@ jobs:
 
       - name: Build with Gradle Wrapper
         working-directory: apigateway
+        env:
+          APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
         run: ./gradlew build
 
 
@@ -54,7 +56,7 @@ jobs:
             docker load < apigateway.tar.gz
             docker stop apigateway || true
             docker rm  apigateway || true
-            docker run -d -p 8071:8071 --name apigateway 
-            docker run -d -p 8071:8071 --name apigateway \
+            docker run -d -p 8080:8080 --name apigateway 
+            docker run -d -p 8080:8080 --name apigateway \
             apigateway
             docker image prune -f --filter "dangling=true"

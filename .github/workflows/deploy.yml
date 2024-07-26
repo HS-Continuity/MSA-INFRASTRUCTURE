@@ -24,7 +24,7 @@ jobs:
         working-directory: apigateway
         env:
           APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
-        run: ./gradlew build
+        run: ./gradlew build --continue
 
 
       - name: Build Docker image

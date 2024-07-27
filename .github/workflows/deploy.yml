@@ -1,10 +1,10 @@
 name: MSA CI with Gradle
 on:
   push:
-    branches: [ "KAN-553--test/배포-자동화-테스트" ]
+    branches: [ "configserver" ]
 jobs:
   apigateway-build-and-deploy:
-    if: startsWith(github.ref, 'refs/heads/KAN-553--test/배포-자동화-테스트')
+    if: startsWith(github.ref, 'refs/heads/configserver')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,45 +18,43 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
 
       - name: Grant execute permission for gradlew
-        run: chmod +x apigateway/gradlew
+        run: chmod +x configserver/gradlew
 
       - name: Build with Gradle Wrapper
-        working-directory: apigateway
-        env:
-          APP_ENCRYPTION_PASSWORD : ${{secrets.APP_ENCRYPTION_PASSWORD}}
+        working-directory: configserver
         run: ./gradlew build
 
 
       - name: Build Docker image
-        working-directory : apigateway
-        run: docker build -t apigateway .
+        working-directory : configserver
+        run: docker build -t configserver .
 
       - name: Save Docker image
-        run: docker save apigateway | gzip > apigateway.tar.gz
+        run: docker save configserver | gzip > configserver.tar.gz
 
       - name: Upload Docker image to EC2
         uses: appleboy/scp-action@v0.1.7
 
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.CONFIG_EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
-          source: "apigateway.tar.gz"
+          source: "configserver.tar.gz"
           target: "/home/ubuntu"
 
       - name: Deploy Docker image on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.CONFIG_EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
           script: |
-            docker load < apigateway.tar.gz
-            docker stop apigateway || true
-            docker rm  apigateway || true
-            docker run -d -p 8080:8080 --name apigateway 
-            docker run -d -p 8080:8080 --name apigateway \
-            apigateway
+            docker load < configserver.tar.gz
+            docker stop configserver || true
+            docker rm  configserver || true
+            docker run -d -p 8071:8071 --name configserver 
+            docker run -d -p 8071:8071 --name configserver \
+            configserver
             docker image prune -f --filter "dangling=true"

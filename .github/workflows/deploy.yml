@@ -46,7 +46,7 @@ jobs:
       - name: Deploy Docker image on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.APIGATEWAY_EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
@@ -54,7 +54,6 @@ jobs:
             docker load < apigateway.tar.gz
             docker stop apigateway || true
             docker rm  apigateway || true
-            docker run -d -p 8080:8080 --name apigateway 
             docker run -d -p 8080:8080 --name apigateway \
             apigateway
             docker image prune -f --filter "dangling=true"

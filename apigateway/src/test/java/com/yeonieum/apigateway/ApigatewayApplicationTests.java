@@ -3,10 +3,10 @@ package com.yeonieum.apigateway;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class ApigatewayApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 

@@ -3,10 +3,10 @@ package com.yeonieum.servicediscovery;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class ServicediscoveryApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 

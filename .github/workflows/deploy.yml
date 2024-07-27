@@ -54,6 +54,5 @@ jobs:
             docker load < servicediscovery.tar.gz
             docker stop servicediscovery || true
             docker rm  servicediscovery || true
-            docker run -d -p 8070:8070 --name servicediscovery \
-            servicediscovery
+            docker run -d -p 8070:8070 --name servicediscovery servicediscovery
             docker image prune -f --filter "dangling=true"

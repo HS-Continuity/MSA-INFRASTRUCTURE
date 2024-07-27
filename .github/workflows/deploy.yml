@@ -54,7 +54,6 @@ jobs:
             docker load < configserver.tar.gz
             docker stop configserver || true
             docker rm  configserver || true
-            docker run -d -p 8071:8071 --name configserver 
             docker run -d -p 8071:8071 --name configserver \
             configserver
             docker image prune -f --filter "dangling=true"

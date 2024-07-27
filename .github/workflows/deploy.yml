@@ -4,7 +4,7 @@ on:
     branches: [ "apigateway" ]
 jobs:
   apigateway-build-and-deploy:
-    if: startsWith(github.ref, 'refs/heads/KAN-553--test/배포-자동화-테스트')
+    if: startsWith(github.ref, 'refs/heads/apigateway')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

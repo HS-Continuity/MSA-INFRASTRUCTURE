@@ -68,7 +68,7 @@ public class GatewayConfig {
         RouteLocatorBuilder.Builder routes = builder.routes();
         try {
             String url = discoveryClient.getInstances("orderservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url).forEach((path, role) -> routes.route(path, r -> r.path("/orderservice" + path)
+            fetchPermissions(url+"/orderservice").forEach((path, role) -> routes.route(path, r -> r.path("/orderservice" + path)
                     .and()
                     .method(role.getMethods())
                     .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))

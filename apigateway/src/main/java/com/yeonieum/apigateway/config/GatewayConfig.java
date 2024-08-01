@@ -69,8 +69,8 @@ public class GatewayConfig {
         try {
             String url = discoveryClient.getInstances("orderservice").stream().map(si -> si.getUri().toString()).findFirst().get();
             fetchPermissions(url+"/orderservice").forEach((path, role) -> routes.route(path, r -> r.path("/orderservice" + path)
-                    .and()
-                    .method(role.getMethods())
+                    //.and()
+                    //.method(role.getMethods())
                     .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
                     .uri("lb://orderservice")));
         } catch (Exception e) {
@@ -97,7 +97,12 @@ public class GatewayConfig {
                 .toEntity(new ParameterizedTypeReference<Map<String, RoleMetadata>>() {})
                 .map(responseEntity -> responseEntity.getBody())
                 .block();
-        System.out.println(response);
+        response.keySet().stream().map(key -> {
+            System.out.println(key);
+            return null;
+        });
+
+        System.out.println(response.keySet());
         return response;
     }
 

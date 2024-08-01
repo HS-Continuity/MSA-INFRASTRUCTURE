@@ -33,29 +33,30 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             // 토큰 추출
-            ServerHttpRequest request = exchange.getRequest();
-            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
-            }
-            String authorization = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
-            String jwt = authorization.replace("Bearer", "");
+        //     ServerHttpRequest request = exchange.getRequest();
+        //     if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+        //         return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
+        //     }
+        //     String authorization = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
+        //     String jwt = authorization.replace("Bearer", "");
 
-            // 토큰 유효성 검증
-            if (!jwtUtils.validateToken(jwt)) {
-                if(jwtUtils.isTokenExpired(jwt)) {
-                    return handleTokenRefresh(exchange, chain, config);
-                } else {
-                    return onError(exchange, "jwt is not valid", HttpStatus.UNAUTHORIZED);
-                }
-            }
+        //     // 토큰 유효성 검증
+        //     if (!jwtUtils.validateToken(jwt)) {
+        //         if(jwtUtils.isTokenExpired(jwt)) {
+        //             return handleTokenRefresh(exchange, chain, config);
+        //         } else {
+        //             return onError(exchange, "jwt is not valid", HttpStatus.UNAUTHORIZED);
+        //         }
+        //     }
 
-            // 인가
-            if(jwtUtils.getRole(jwt).equals(config.getRole())) {
-                return chain.filter(exchange);
-            } else {
-                return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
-            }
-        };
+        //     // 인가
+        //     if(jwtUtils.getRole(jwt).equals(config.getRole())) {
+        //         return chain.filter(exchange);
+        //     } else {
+        //         return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
+        //     }
+        // };
+            return chain.filter(exchange);
     }
 
     private Mono<Void> handleTokenRefresh(ServerWebExchange exchange, GatewayFilterChain chain, Config config) {

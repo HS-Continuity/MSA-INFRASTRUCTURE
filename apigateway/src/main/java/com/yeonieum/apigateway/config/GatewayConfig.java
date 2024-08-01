@@ -10,7 +10,6 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class GatewayConfig {
         RouteLocatorBuilder.Builder routes = builder.routes();
         try {
             String url = discoveryClient.getInstances("productservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url).forEach((path, role) -> routes.route(path, r -> r.path("/productservice" + path)
+            fetchPermissions(url + "/productservice").forEach((path, role) -> routes.route(path, r -> r.path("/productservice" + path)
                             .and()
                             .method(role.getMethods())
                             .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
@@ -48,7 +47,7 @@ public class GatewayConfig {
         RouteLocatorBuilder.Builder routes = builder.routes();
         try {
             String url = discoveryClient.getInstances("memberservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url).forEach((path, role) -> routes.route(path, r -> r.path("/memberservice" + path)
+            fetchPermissions(url + "/memberservice").forEach((path, role) -> routes.route(path, r -> r.path("/memberservice" + path)
                     .and()
                     .method(role.getMethods())
                     .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
@@ -97,12 +96,7 @@ public class GatewayConfig {
                 .toEntity(new ParameterizedTypeReference<Map<String, RoleMetadata>>() {})
                 .map(responseEntity -> responseEntity.getBody())
                 .block();
-        response.keySet().stream().map(key -> {
-            System.out.println(key);
-            return null;
-        });
 
-        System.out.println(response.keySet());
         return response;
     }
 

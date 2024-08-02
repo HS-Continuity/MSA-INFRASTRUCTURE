@@ -50,7 +50,11 @@ public class GatewayConfig {
             fetchPermissions(url + "/memberservice").forEach((path, role) -> routes.route(path, r -> r.path("/memberservice" + path)
                     .and()
                     .method(role.getMethods())
-                    .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+                    .filters(f -> f
+                            .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+                            .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+                            .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles())))
+                    )
                     .uri("lb://memberservice")));
         } catch (Exception e) {
             // 일단 무시하고 라우터 구성

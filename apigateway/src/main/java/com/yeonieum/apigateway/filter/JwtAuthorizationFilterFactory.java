@@ -68,7 +68,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                 if(role.equals("*")) {
                     String roleType = jwtUtils.getRole(jwt);
                     String username = jwtUtils.getUserName(jwt);
-
+                    System.out.println(username);
                     exchange.getRequest().mutate()
                             .header(UserContext.ROLE_TYPE, roleType)
                             .header(UserContext.USER_ID, username)
@@ -85,6 +85,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                     String roleType = jwtUtils.getRole(jwt);
                     String username = jwtUtils.getUserName(jwt);
                     System.out.println(roleType);
+                    System.out.println(username);
                     exchange.getRequest().mutate()
                             .header(UserContext.ROLE_TYPE, roleType)
                             .header(UserContext.USER_ID, username)

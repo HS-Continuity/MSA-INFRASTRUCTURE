@@ -20,6 +20,7 @@ public class JwtUtils {
     private long TOKEN_VALIDATION_TIME; // 25분
 
     private final String ROLE = "role";
+    private final String USERNAME = "username";
 
     private Key key;
     @PostConstruct
@@ -45,6 +46,9 @@ public class JwtUtils {
         return extractAllClaims(token).get(ROLE, String.class);
     }
 
+    public String getUserName(String token) {
+        return extractAllClaims(token).get(USERNAME, String.class);
+    }
 
     public boolean validateToken(String token) {
         try{

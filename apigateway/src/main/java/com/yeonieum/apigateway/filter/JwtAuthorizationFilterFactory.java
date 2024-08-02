@@ -57,6 +57,22 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
             // 인가
             for(String role : config.getRole()) {
+                if(role.equals("*")) {
+                    String roleType = jwtUtils.getRole(jwt);
+                    String username = jwtUtils.getUserName(jwt);
+
+                    exchange.getRequest().mutate()
+                            .header(UserContext.ROLE_TYPE, roleType)
+                            .header(UserContext.USER_ID, username)
+                            .header(UserContext.UNIQUE_ID, username)
+                            .header(UserContext.SERVICE_ID, "")
+                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                            .header(UserContext.AUTH_TOKEN, jwt)
+                            .build();
+
+                    return chain.filter(exchange);
+                }
+
                 if (jwtUtils.getRole(jwt).equals(role)) {
                     String roleType = jwtUtils.getRole(jwt);
                     String username = jwtUtils.getUserName(jwt);

@@ -42,7 +42,6 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             if(config.getRole().get(0).equals("*")) {
                 return chain.filter(exchange);
             }
-            System.out.println("ㅁㅇ라ㅓㅣㅇㄹㄹㅇ넌알라ㅓㅁㅇ");
 
             // 토큰 추출
             ServerHttpRequest request = exchange.getRequest();
@@ -54,7 +53,9 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
             // 토큰 유효성 검증
             if (!jwtUtils.validateToken(jwt)) {
+                System.out.println("토큰이 유효하지 않습니다.");
                 if(jwtUtils.isTokenExpired(jwt)) {
+                    System.out.println("토큰이 만료.");
                     return handleTokenRefresh(exchange, chain, config);
                 } else {
                     return onError(exchange, "jwt is not valid", HttpStatus.UNAUTHORIZED);
@@ -79,11 +80,11 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
                     return chain.filter(exchange);
                 }
-
+                System.out.println("토큰 롤 검증.");
                 if (jwtUtils.getRole(jwt).equals(role)) {
                     String roleType = jwtUtils.getRole(jwt);
                     String username = jwtUtils.getUserName(jwt);
-
+                    System.out.println(roleType);
                     exchange.getRequest().mutate()
                             .header(UserContext.ROLE_TYPE, roleType)
                             .header(UserContext.USER_ID, username)

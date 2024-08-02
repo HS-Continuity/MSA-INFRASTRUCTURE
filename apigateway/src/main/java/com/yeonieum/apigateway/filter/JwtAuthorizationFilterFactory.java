@@ -1,6 +1,7 @@
 package com.yeonieum.apigateway.filter;
 
 import com.yeonieum.apigateway.util.JwtUtils;
+import com.yeonieum.apigateway.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<JwtAuthorizationFilterFactory.Config> {
@@ -37,32 +39,42 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
         return (exchange, chain) -> {
             // 토큰 추출
             ServerHttpRequest request = exchange.getRequest();
-            System.out.println(request.getPath());
-//            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-//                return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
-//            }
-//            String authorization = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
-//            String jwt = authorization.replace("Bearer ", "");
-//
-//            // 토큰 유효성 검증
-//            if (!jwtUtils.validateToken(jwt)) {
-//                if(jwtUtils.isTokenExpired(jwt)) {
-//                    return handleTokenRefresh(exchange, chain, config);
-//                } else {
-//                    return onError(exchange, "jwt is not valid", HttpStatus.UNAUTHORIZED);
-//                }
-//            }
-//
-//
-//            // 인가
-//            for(String role : config.getRole()) {
-//                if (jwtUtils.getRole(jwt).equals(role)) {
-//                    return chain.filter(exchange);
-//                }
-//            }
-//
-//            return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
-            return chain.filter(exchange);
+            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
+            }
+            String authorization = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
+            String jwt = authorization.replace("Bearer ", "");
+
+            // 토큰 유효성 검증
+            if (!jwtUtils.validateToken(jwt)) {
+                if(jwtUtils.isTokenExpired(jwt)) {
+                    return handleTokenRefresh(exchange, chain, config);
+                } else {
+                    return onError(exchange, "jwt is not valid", HttpStatus.UNAUTHORIZED);
+                }
+            }
+
+
+            // 인가
+            for(String role : config.getRole()) {
+                if (jwtUtils.getRole(jwt).equals(role)) {
+                    String roleType = jwtUtils.getRole(jwt);
+                    String username = jwtUtils.getUserName(jwt);
+
+                    exchange.getRequest().mutate()
+                            .header(UserContext.ROLE_TYPE, roleType)
+                            .header(UserContext.USER_ID, username)
+                            .header(UserContext.UNIQUE_ID, username)
+                            .header(UserContext.SERVICE_ID, "")
+                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                            .header(UserContext.AUTH_TOKEN, jwt)
+                            .build();
+
+                    return chain.filter(exchange);
+                }
+            }
+
+            return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
         };
     }
 

@@ -75,7 +75,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                             .header(UserContext.UNIQUE_ID, username)
                             .header(UserContext.SERVICE_ID, "")
                             .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                            .header(UserContext.AUTH_TOKEN, jwt)
+                            .header(UserContext.AUTH_TOKEN, authorization)
                             .build();
 
                     return chain.filter(exchange);

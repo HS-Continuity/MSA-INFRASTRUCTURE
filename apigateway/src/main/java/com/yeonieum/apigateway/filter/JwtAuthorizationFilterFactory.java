@@ -37,7 +37,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            System.out.println(config.getRole().get(0));
+            System.out.println(config.getRole());
             System.out.println("들어옴");
             if(config.getRole().get(0).equals("*")) {
                 return chain.filter(exchange);

@@ -115,6 +115,9 @@ public class GatewayConfig {
                                 "/memberservice/access-token",
                                 "/memberservice/api/auth/logout",
                                 "/memberservice/api/member/join")
+                        .filters(f -> f
+                                .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE"))
                         .uri("lb://memberservice"))
                 .route("memberservice_route", r -> r.path("/memberservice/**")
                         .filters(f -> f

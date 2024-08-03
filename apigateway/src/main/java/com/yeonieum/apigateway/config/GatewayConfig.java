@@ -27,14 +27,17 @@ public class GatewayConfig {
         RouteLocatorBuilder.Builder routes = builder.routes();
         try {
             String url = discoveryClient.getInstances("productservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url + "/productservice").forEach((path, role) -> routes.route(path, r -> r.path("/productservice" + path)
-                            .and()
-                            .method(role.getMethods())
-                            .filters(f -> f
-                                    .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
-                                    .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
-                                    .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
-                            .uri("lb://productservice")));
+            fetchPermissions(url + "/productservice").forEach((path, role) -> {
+                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
+                routes.route(path, r -> r.path("/productservice" + path)
+                        .and()
+                        .method(role.getMethods())
+                        .filters(f -> f
+                                .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+                        .uri("lb://productservice"));
+            });
         } catch (Exception e) {
             // 일단 무시하고 라우터 구성
             e.printStackTrace();
@@ -50,15 +53,18 @@ public class GatewayConfig {
         RouteLocatorBuilder.Builder routes = builder.routes();
         try {
             String url = discoveryClient.getInstances("memberservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url + "/memberservice").forEach((path, role) -> routes.route(path, r -> r.path("/memberservice" + path)
-                    .and()
-                    .method(role.getMethods())
-                    .filters(f -> f
-                            .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
-                            .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
-                            .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles())))
-                    )
-                    .uri("lb://memberservice")));
+            fetchPermissions(url + "/memberservice").forEach((path, role) -> {
+                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
+                routes.route(path, r -> r.path("/memberservice" + path)
+                            .and()
+                            .method(role.getMethods())
+                            .filters(f -> f
+                                    .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+                                    .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+                                    .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles())))
+                            )
+                            .uri("lb://memberservice"));
+            });
         } catch (Exception e) {
             // 일단 무시하고 라우터 구성
             e.printStackTrace();

@@ -88,8 +88,8 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                     System.out.println(username);
                     exchange.getRequest().mutate()
                             .header(UserContext.ROLE_TYPE, roleType)
-                            .header(UserContext.USER_ID, username)
-                            .header(UserContext.UNIQUE_ID, username)
+                            .header(UserContext.USER_ID, String.valueOf(username))
+                            .header(UserContext.UNIQUE_ID, String.valueOf(username))
                             .header(UserContext.SERVICE_ID, "")
                             .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
                             .header(UserContext.AUTH_TOKEN, jwt)

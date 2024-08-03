@@ -63,43 +63,60 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             }
 
 
-            // 인가
-            for(String role : config.getRole()) {
-                if(role.equals("*")) {
-                    String roleType = jwtUtils.getRole(jwt);
-                    String username = jwtUtils.getUserName(jwt);
-                    System.out.println(username);
-                    exchange.getRequest().mutate()
-                            .header(UserContext.ROLE_TYPE, roleType)
-                            .header(UserContext.USER_ID, username)
-                            .header(UserContext.UNIQUE_ID, username)
-                            .header(UserContext.SERVICE_ID, "")
-                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                            .header(UserContext.AUTH_TOKEN, authorization)
-                            .build();
+            String roleType = jwtUtils.getRole(jwt);
+            String username = jwtUtils.getUserName(jwt);
+            System.out.println(roleType);
+            System.out.println(username);
+            exchange.getRequest().mutate()
+                    .header(UserContext.ROLE_TYPE, roleType)
+                    .header(UserContext.USER_ID, String.valueOf(username))
+                    .header(UserContext.UNIQUE_ID, String.valueOf(username))
+                    .header(UserContext.SERVICE_ID, "")
+                    .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                    .header(UserContext.AUTH_TOKEN, jwt)
+                    .build();
 
-                    return chain.filter(exchange);
-                }
-                System.out.println("토큰 롤 검증.");
-                if (jwtUtils.getRole(jwt).equals(role)) {
-                    String roleType = jwtUtils.getRole(jwt);
-                    String username = jwtUtils.getUserName(jwt);
-                    System.out.println(roleType);
-                    System.out.println(username);
-                    exchange.getRequest().mutate()
-                            .header(UserContext.ROLE_TYPE, roleType)
-                            .header(UserContext.USER_ID, String.valueOf(username))
-                            .header(UserContext.UNIQUE_ID, String.valueOf(username))
-                            .header(UserContext.SERVICE_ID, "")
-                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                            .header(UserContext.AUTH_TOKEN, jwt)
-                            .build();
+            return chain.filter(exchange);
 
-                    return chain.filter(exchange);
-                }
-            }
 
-            return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
+
+//            // 인가
+//            for(String role : config.getRole()) {
+//                if(role.equals("*")) {
+//                    String roleType = jwtUtils.getRole(jwt);
+//                    String username = jwtUtils.getUserName(jwt);
+//                    System.out.println(username);
+//                    exchange.getRequest().mutate()
+//                            .header(UserContext.ROLE_TYPE, roleType)
+//                            .header(UserContext.USER_ID, username)
+//                            .header(UserContext.UNIQUE_ID, username)
+//                            .header(UserContext.SERVICE_ID, "")
+//                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+//                            .header(UserContext.AUTH_TOKEN, authorization)
+//                            .build();
+//
+//                    return chain.filter(exchange);
+//                }
+////                System.out.println("토큰 롤 검증.");
+////                if (jwtUtils.getRole(jwt).equals(role)) {
+//                String roleType = jwtUtils.getRole(jwt);
+//                String username = jwtUtils.getUserName(jwt);
+//                System.out.println(roleType);
+//                System.out.println(username);
+//                exchange.getRequest().mutate()
+//                        .header(UserContext.ROLE_TYPE, roleType)
+//                        .header(UserContext.USER_ID, String.valueOf(username))
+//                        .header(UserContext.UNIQUE_ID, String.valueOf(username))
+//                        .header(UserContext.SERVICE_ID, "")
+//                        .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+//                        .header(UserContext.AUTH_TOKEN, jwt)
+//                        .build();
+//
+//                return chain.filter(exchange);
+//               // }
+//            }
+
+           // return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
         };
     }
 

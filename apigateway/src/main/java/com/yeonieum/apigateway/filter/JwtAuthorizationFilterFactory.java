@@ -37,11 +37,11 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            System.out.println(config.getRole());
-            System.out.println("들어옴");
-            if(config.getRole().get(0).equals("*")) {
-                return chain.filter(exchange);
-            }
+//            System.out.println(config.getRole());
+//            System.out.println("들어옴");
+//            if(config.getRole().get(0).equals("*")) {
+//                return chain.filter(exchange);
+//            }
 
             // 토큰 추출
             ServerHttpRequest request = exchange.getRequest();

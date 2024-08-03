@@ -37,12 +37,11 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-//            System.out.println(config.getRole());
-//            System.out.println("들어옴");
-//            if(config.getRole().get(0).equals("*")) {
-//                return chain.filter(exchange);
-//            }
-
+            System.out.println(config.getRole());
+            System.out.println("들어옴");
+            if (config.getRole().get(0).equals("*")) {
+                return chain.filter(exchange);
+            }
 
 
             // 토큰 추출
@@ -56,7 +55,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             // 토큰 유효성 검증
             if (!jwtUtils.validateToken(jwt)) {
                 System.out.println("토큰이 유효하지 않습니다.");
-                if(jwtUtils.isTokenExpired(jwt)) {
+                if (jwtUtils.isTokenExpired(jwt)) {
                     System.out.println("토큰이 만료.");
                     return handleTokenRefresh(exchange, chain, config);
                 } else {
@@ -65,60 +64,43 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             }
 
 
-            String roleType = jwtUtils.getRole(jwt);
-            String username = jwtUtils.getUserName(jwt);
-            System.out.println(roleType);
-            System.out.println(username);
-            exchange.getRequest().mutate()
-                    .header(UserContext.ROLE_TYPE, roleType)
-                    .header(UserContext.USER_ID, String.valueOf(username))
-                    .header(UserContext.UNIQUE_ID, String.valueOf(username))
-                    .header(UserContext.SERVICE_ID, "")
-                    .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                    .header(UserContext.AUTH_TOKEN, jwt)
-                    .build();
-
-            return chain.filter(exchange);
-
-
-
 //            // 인가
-//            for(String role : config.getRole()) {
-//                if(role.equals("*")) {
-//                    String roleType = jwtUtils.getRole(jwt);
-//                    String username = jwtUtils.getUserName(jwt);
-//                    System.out.println(username);
-//                    exchange.getRequest().mutate()
-//                            .header(UserContext.ROLE_TYPE, roleType)
-//                            .header(UserContext.USER_ID, username)
-//                            .header(UserContext.UNIQUE_ID, username)
-//                            .header(UserContext.SERVICE_ID, "")
-//                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-//                            .header(UserContext.AUTH_TOKEN, authorization)
-//                            .build();
-//
-//                    return chain.filter(exchange);
-//                }
-////                System.out.println("토큰 롤 검증.");
-////                if (jwtUtils.getRole(jwt).equals(role)) {
-//                String roleType = jwtUtils.getRole(jwt);
-//                String username = jwtUtils.getUserName(jwt);
-//                System.out.println(roleType);
-//                System.out.println(username);
-//                exchange.getRequest().mutate()
-//                        .header(UserContext.ROLE_TYPE, roleType)
-//                        .header(UserContext.USER_ID, String.valueOf(username))
-//                        .header(UserContext.UNIQUE_ID, String.valueOf(username))
-//                        .header(UserContext.SERVICE_ID, "")
-//                        .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-//                        .header(UserContext.AUTH_TOKEN, jwt)
-//                        .build();
-//
-//                return chain.filter(exchange);
-//               // }
-//            }
+            for (String role : config.getRole()) {
+                if (role.equals("*")) {
+                    String roleType = jwtUtils.getRole(jwt);
+                    String username = jwtUtils.getUserName(jwt);
+                    System.out.println(username);
+                    exchange.getRequest().mutate()
+                            .header(UserContext.ROLE_TYPE, roleType)
+                            .header(UserContext.USER_ID, username)
+                            .header(UserContext.UNIQUE_ID, username)
+                            .header(UserContext.SERVICE_ID, "")
+                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                            .header(UserContext.AUTH_TOKEN, authorization)
+                            .build();
 
-           // return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
+                    return chain.filter(exchange);
+                }
+                System.out.println("토큰 롤 검증.");
+                if (jwtUtils.getRole(jwt).equals(role)) {
+                    String roleType = jwtUtils.getRole(jwt);
+                    String username = jwtUtils.getUserName(jwt);
+                    System.out.println(roleType);
+                    System.out.println(username);
+                    exchange.getRequest().mutate()
+                            .header(UserContext.ROLE_TYPE, roleType)
+                            .header(UserContext.USER_ID, String.valueOf(username))
+                            .header(UserContext.UNIQUE_ID, String.valueOf(username))
+                            .header(UserContext.SERVICE_ID, "")
+                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                            .header(UserContext.AUTH_TOKEN, jwt)
+                            .build();
+
+                    return chain.filter(exchange);
+                }
+            }
+
+            return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
         };
     }
 
@@ -148,9 +130,9 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
     public static class Config {
         private List<String> role;
-//        public Config(List<String> role) {
-//            this.role = role;
-//        }
+        public Config(List<String> role) {
+            this.role = role;
+        }
 
         public Config() {
 

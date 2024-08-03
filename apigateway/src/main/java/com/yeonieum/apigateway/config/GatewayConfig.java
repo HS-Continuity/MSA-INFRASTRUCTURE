@@ -30,7 +30,10 @@ public class GatewayConfig {
             fetchPermissions(url + "/productservice").forEach((path, role) -> routes.route(path, r -> r.path("/productservice" + path)
                             .and()
                             .method(role.getMethods())
-                            .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+                            .filters(f -> f
+                                    .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+                                    .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+                                    .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
                             .uri("lb://productservice")));
         } catch (Exception e) {
             // 일단 무시하고 라우터 구성
@@ -74,7 +77,10 @@ public class GatewayConfig {
             fetchPermissions(url+"/orderservice").forEach((path, role) -> routes.route(path, r -> r.path("/orderservice" + path)
                     //.and()
                     //.method(role.getMethods())
-                    .filters(f -> f.filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+                    .filters(f -> f
+                            .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+                            .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+                            .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
                     .uri("lb://orderservice")));
         } catch (Exception e) {
             // 일단 무시하고 라우터 구성

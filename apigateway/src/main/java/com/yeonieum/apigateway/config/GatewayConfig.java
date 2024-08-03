@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Configuration
@@ -117,7 +120,15 @@ public class GatewayConfig {
                 .map(responseEntity -> responseEntity.getBody())
                 .block();
 
-        return response;
+        return response.entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getKey().length(), entry1.getKey().length()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
 }

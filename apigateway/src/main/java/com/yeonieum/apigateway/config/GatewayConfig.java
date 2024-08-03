@@ -24,84 +24,109 @@ public class GatewayConfig {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
+//    @Bean
+//    @RefreshScope
+//    public RouteLocator productRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
+//        RouteLocatorBuilder.Builder routes = builder.routes();
+//        try {
+//            String url = discoveryClient.getInstances("productservice").stream().map(si -> si.getUri().toString()).findFirst().get();
+//            fetchPermissions(url + "/productservice").forEach((path, role) -> {
+//                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
+//                routes.route(path, r -> r.path("/productservice" + path)
+//                        .and()
+//                        .method(role.getMethods())
+//                        .filters(f -> f
+//                                .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+//                                .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+//                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+//                        .uri("lb://productservice"));
+//            });
+//        } catch (Exception e) {
+//            // 일단 무시하고 라우터 구성
+//            e.printStackTrace();
+//        }
+//
+//
+//        return routes.build();
+//    }
+//
+//    @Bean
+//    @RefreshScope
+//    public RouteLocator memberRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
+//        RouteLocatorBuilder.Builder routes = builder.routes();
+//        try {
+//            String url = discoveryClient.getInstances("memberservice").stream().map(si -> si.getUri().toString()).findFirst().get();
+//            fetchPermissions(url + "/memberservice").forEach((path, role) -> {
+//                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
+//                routes.route(path, r -> r.path("/memberservice" + path)
+//                            .and()
+//                            .method(role.getMethods())
+//                            .filters(f -> f
+//                                    .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+//                                    .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+//                                    .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles())))
+//                            )
+//                            .uri("lb://memberservice"));
+//            });
+//        } catch (Exception e) {
+//            // 일단 무시하고 라우터 구성
+//            e.printStackTrace();
+//        }
+//
+//
+//        return routes.build();
+//    }
+//
+//    @Bean
+//    @RefreshScope
+//    public RouteLocator orderRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
+//        RouteLocatorBuilder.Builder routes = builder.routes();
+//        try {
+//            String url = discoveryClient.getInstances("orderservice").stream().map(si -> si.getUri().toString()).findFirst().get();
+//            fetchPermissions(url+"/orderservice").forEach((path, role) -> {
+//                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
+//
+//                routes.route(path, r -> r.path("/orderservice" + path)
+//                        //.and()
+//                        //.method(role.getMethods())
+//                        .filters(f -> f
+//                                .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
+//                                .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
+//                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
+//                        .uri("lb://orderservice"));
+//            });
+//        } catch (Exception e) {
+//            // 일단 무시하고 라우터 구성
+//            e.printStackTrace();
+//        }
+//
+//
+//        return routes.build();
+//    }
+
     @Bean
     @RefreshScope
     public RouteLocator productRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
-        RouteLocatorBuilder.Builder routes = builder.routes();
-        try {
-            String url = discoveryClient.getInstances("productservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url + "/productservice").forEach((path, role) -> {
-                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
-                routes.route(path, r -> r.path("/productservice" + path)
-                        .and()
-                        .method(role.getMethods())
+        return builder.routes()
+                .route("memberservice_route", r -> r.path("/memberservice/**")
                         .filters(f -> f
-                                .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
-                                .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
-                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
-                        .uri("lb://productservice"));
-            });
-        } catch (Exception e) {
-            // 일단 무시하고 라우터 구성
-            e.printStackTrace();
-        }
-
-
-        return routes.build();
-    }
-
-    @Bean
-    @RefreshScope
-    public RouteLocator memberRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
-        RouteLocatorBuilder.Builder routes = builder.routes();
-        try {
-            String url = discoveryClient.getInstances("memberservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url + "/memberservice").forEach((path, role) -> {
-                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
-                routes.route(path, r -> r.path("/memberservice" + path)
-                            .and()
-                            .method(role.getMethods())
-                            .filters(f -> f
-                                    .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
-                                    .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
-                                    .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles())))
-                            )
-                            .uri("lb://memberservice"));
-            });
-        } catch (Exception e) {
-            // 일단 무시하고 라우터 구성
-            e.printStackTrace();
-        }
-
-
-        return routes.build();
-    }
-
-    @Bean
-    @RefreshScope
-    public RouteLocator orderRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
-        RouteLocatorBuilder.Builder routes = builder.routes();
-        try {
-            String url = discoveryClient.getInstances("orderservice").stream().map(si -> si.getUri().toString()).findFirst().get();
-            fetchPermissions(url+"/orderservice").forEach((path, role) -> {
-                System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
-
-                routes.route(path, r -> r.path("/orderservice" + path)
-                        //.and()
-                        //.method(role.getMethods())
+                                .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE")
+                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config())))
+                        .uri("lb://memberservice"))
+                .route("orderservice_route", r -> r.path("/orderservice/**")
                         .filters(f -> f
-                                .dedupeResponseHeader("Access-Control-Allow-Origin","RETAIN_UNIQUE")
-                                .dedupeResponseHeader("Access-Control-Allow-Credentials","RETAIN_UNIQUE")
-                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config(role.getRoles()))))
-                        .uri("lb://orderservice"));
-            });
-        } catch (Exception e) {
-            // 일단 무시하고 라우터 구성
-            e.printStackTrace();
-        }
-
-
-        return routes.build();
+                                .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE")
+                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config())))
+                        .uri("lb://orderservice"))
+                .route("productservice_route", r -> r.path("/productservice/**")
+                        .filters(f -> f
+                                .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE")
+                                .filter(jwtAuthorizationFilterFactory.apply(new JwtAuthorizationFilterFactory.Config())))
+                        .uri("lb://productservice"))
+                .build();
     }
 
 

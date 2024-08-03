@@ -146,8 +146,12 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
 
     public static class Config {
         private List<String> role;
-        public Config(List<String> role) {
-            this.role = role;
+//        public Config(List<String> role) {
+//            this.role = role;
+//        }
+
+        public Config() {
+
         }
         public List<String> getRole() {
             return role;

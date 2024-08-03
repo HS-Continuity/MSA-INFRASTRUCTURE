@@ -32,7 +32,7 @@ public class GatewayConfig {
             String url = discoveryClient.getInstances("productservice").stream().map(si -> si.getUri().toString()).findFirst().get();
             fetchPermissions(url + "/productservice").forEach((path, role) -> {
                 System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
-                routes.route(path, r -> r.path("/productservice" + path)
+                routes.route(path, r -> r.path("/productservice" + path.split(":")[0])
                         .and()
                         .method(role.getMethods())
                         .filters(f -> f
@@ -58,7 +58,7 @@ public class GatewayConfig {
             String url = discoveryClient.getInstances("memberservice").stream().map(si -> si.getUri().toString()).findFirst().get();
             fetchPermissions(url + "/memberservice").forEach((path, role) -> {
                 System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
-                routes.route(path, r -> r.path("/memberservice" + path)
+                routes.route(path, r -> r.path("/memberservice" + path.split(":")[0])
                             .and()
                             .method(role.getMethods())
                             .filters(f -> f
@@ -86,7 +86,7 @@ public class GatewayConfig {
             fetchPermissions(url+"/orderservice").forEach((path, role) -> {
                 System.out.println("Registering route: " + path + " with roles: " + role.getRoles());
 
-                routes.route(path, r -> r.path("/orderservice" + path)
+                routes.route(path, r -> r.path("/orderservice" + path.split(":")[0])
                         .and()
                         .method(role.getMethods())
                         .filters(f -> f

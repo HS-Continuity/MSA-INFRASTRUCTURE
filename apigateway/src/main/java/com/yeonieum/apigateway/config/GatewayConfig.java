@@ -108,6 +108,14 @@ public class GatewayConfig {
     @RefreshScope
     public RouteLocator productRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilterFactory jwtAuthorizationFilterFactory) {
         return builder.routes()
+                .route("memberservice_no_filter_route", r -> r.path(
+                        "/memberservice/api/auth/**",
+                                "/memberservice/api/permissions",
+                                "/memberservice/api/permissions",
+                                "/memberservice/access-token",
+                                "/memberservice/api/auth/logout",
+                                "/memberservice/api/member/join")
+                        .uri("lb://memberservice"))
                 .route("memberservice_route", r -> r.path("/memberservice/**")
                         .filters(f -> f
                                 .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")

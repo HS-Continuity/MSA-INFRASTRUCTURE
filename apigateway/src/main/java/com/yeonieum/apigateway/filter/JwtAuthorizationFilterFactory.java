@@ -40,7 +40,10 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             System.out.println(config.getRole());
             System.out.println("들어옴");
             ServerHttpRequest request = exchange.getRequest();
-
+            // 쿠키 순회하면서 키와 값 출력
+            request.getCookies().forEach((key, value) -> {
+                System.out.println("key: " + key + ", value: " + value);
+            });
             if (config.getRole().get(0).equals("*")
                     || (request.getURI().getPath().contains("/memberservice/access-token") && request.getHeaders().containsKey("REFRESH_TOKEN"))) {
                 System.out.println("토큰 재발급 요청 들어옴");

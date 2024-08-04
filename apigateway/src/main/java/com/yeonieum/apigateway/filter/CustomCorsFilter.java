@@ -39,8 +39,7 @@ public class CustomCorsFilter implements GlobalFilter, Ordered {
             if (!response.isCommitted()) {
                 if (ORIGIN_5173.equals(origin) || ORIGIN_5174.equals(origin)) {
                     HttpHeaders headers = response.getHeaders();
-                    headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:5173");
-                    headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:5174");
+                    headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                     headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, PATCH, OPTIONS");
                     headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Authorization, Content-Type, Accept");
                     headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");

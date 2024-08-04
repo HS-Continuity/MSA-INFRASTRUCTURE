@@ -39,13 +39,15 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
         return (exchange, chain) -> {
             System.out.println(config.getRole());
             System.out.println("들어옴");
-            if (config.getRole().get(0).equals("*")) {
+            ServerHttpRequest request = exchange.getRequest();
+
+            if (config.getRole().get(0).equals("*")
+                    || (request.getURI().getPath().contains("/memberservice/access-token") && request.getHeaders().containsKey("REFRESH_TOEKN"))) {
                 return chain.filter(exchange);
             }
 
 
             // 토큰 추출
-            ServerHttpRequest request = exchange.getRequest();
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
             }

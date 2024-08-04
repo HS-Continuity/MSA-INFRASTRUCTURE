@@ -42,7 +42,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
             ServerHttpRequest request = exchange.getRequest();
 
             if (config.getRole().get(0).equals("*")
-                    || (request.getURI().getPath().contains("/memberservice/access-token") && request.getHeaders().containsKey("REFRESH_TOEKN"))) {
+                    || (request.getURI().getPath().contains("/memberservice/access-token") && request.getHeaders().containsKey("REFRESH_TOKEN"))) {
                 return chain.filter(exchange);
             }
 

@@ -20,6 +20,7 @@ public class CustomCorsFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         String origin = request.getHeaders().getOrigin();
+        System.out.println(origin);
 
 
 

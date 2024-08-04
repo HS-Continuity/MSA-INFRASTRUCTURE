@@ -1,5 +1,6 @@
 package com.yeonieum.apigateway.filter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -15,6 +16,10 @@ import reactor.core.publisher.Mono;
 public class CustomCorsFilter implements GlobalFilter, Ordered {
     private static final String ORIGIN_5173 = "http://localhost:5173";
     private static final String ORIGIN_5174 = "http://localhost:5174";
+    @Value("${cors.allowed.origin.yeonieum}")
+    private String CORS_ALLOWED_ORIGIN_YEONIEUM;
+    @Value("${cors.allowed.origin.dashboard}")
+    private String CORS_ALLOWED_ORIGIN_DASHBOARD;
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -25,7 +30,7 @@ public class CustomCorsFilter implements GlobalFilter, Ordered {
 
 
         if (HttpMethod.OPTIONS.equals(request.getMethod())) {
-            if (ORIGIN_5173.equals(origin) || ORIGIN_5174.equals(origin)) {
+            if (ORIGIN_5173.equals(origin) || ORIGIN_5174.equals(origin) || CORS_ALLOWED_ORIGIN_YEONIEUM.equals(origin) || CORS_ALLOWED_ORIGIN_DASHBOARD.equals(origin)) {
                 response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                 response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, PATCH, OPTIONS");
                 response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Authorization, Content-Type, Accept");
@@ -37,7 +42,7 @@ public class CustomCorsFilter implements GlobalFilter, Ordered {
 
         return chain.filter(exchange).then(Mono.fromRunnable(() -> {
             if (!response.isCommitted()) {
-                if (ORIGIN_5173.equals(origin) || ORIGIN_5174.equals(origin)) {
+                if (ORIGIN_5173.equals(origin) || ORIGIN_5174.equals(origin) || CORS_ALLOWED_ORIGIN_YEONIEUM.equals(origin) || CORS_ALLOWED_ORIGIN_DASHBOARD.equals(origin)) {
                     HttpHeaders headers = response.getHeaders();
                     headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                     headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, PATCH, OPTIONS");

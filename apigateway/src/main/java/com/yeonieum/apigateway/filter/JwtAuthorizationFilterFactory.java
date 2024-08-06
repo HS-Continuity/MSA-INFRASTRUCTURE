@@ -114,7 +114,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
         // 리프레시 토큰을 추출, 새로운 액세스 토큰 발급 요청
         return webClientBuilder.build()
                 .post()
-                .uri("lb://memberservice/access-token")
+                .uri("lb://memberservice/memberservice/access-token")
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 //.bodyValue("{\"refreshToken\":\"" + refreshToken + "\"}")
                 .cookie("REFRESH_TOKEN", refreshToken)

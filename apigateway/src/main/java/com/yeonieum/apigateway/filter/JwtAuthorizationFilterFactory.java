@@ -77,15 +77,7 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                     String roleType = jwtUtils.getRole(jwt);
                     String username = jwtUtils.getUserName(jwt);
                     System.out.println(username);
-                    exchange.getRequest().mutate()
-                            .header(UserContext.ROLE_TYPE, roleType)
-                            .header(UserContext.USER_ID, username)
-                            .header(UserContext.UNIQUE_ID, username)
-                            .header(UserContext.SERVICE_ID, "")
-                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                            .header(UserContext.AUTH_TOKEN, authorization)
-                            .build();
-
+                    setUserContext(exchange, roleType, username, jwt);
                     return chain.filter(exchange);
                 }
                 System.out.println("토큰 롤 검증.");
@@ -94,21 +86,25 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
                     String username = jwtUtils.getUserName(jwt);
                     System.out.println(roleType);
                     System.out.println(username);
-                    exchange.getRequest().mutate()
-                            .header(UserContext.ROLE_TYPE, roleType)
-                            .header(UserContext.USER_ID, String.valueOf(username))
-                            .header(UserContext.UNIQUE_ID, String.valueOf(username))
-                            .header(UserContext.SERVICE_ID, "")
-                            .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
-                            .header(UserContext.AUTH_TOKEN, jwt)
-                            .build();
-
+                    setUserContext(exchange, roleType, username, jwt);
                     return chain.filter(exchange);
                 }
             }
 
             return onError(exchange, "Role is not valid", HttpStatus.FORBIDDEN);
         };
+    }
+
+    private void setUserContext(ServerWebExchange exchange, String roleType , String username, String jwt) {
+        exchange.getRequest().mutate()
+                .header(UserContext.ROLE_TYPE, roleType)
+                .header(UserContext.USER_ID, String.valueOf(username))
+                .header(UserContext.UNIQUE_ID, String.valueOf(username))
+                .header(UserContext.SERVICE_ID, "")
+                .header(UserContext.TRANSACTION_ID, UUID.randomUUID().toString())
+                .header(UserContext.AUTH_TOKEN, jwt)
+                .build();
+
     }
 
     private Mono<Void> handleTokenRefresh(ServerWebExchange exchange, GatewayFilterChain chain, Config config) {
@@ -118,16 +114,16 @@ public class JwtAuthorizationFilterFactory extends AbstractGatewayFilterFactory<
         // 리프레시 토큰을 추출, 새로운 액세스 토큰 발급 요청
         return webClientBuilder.build()
                 .post()
-                .uri("lb://memberservice/refresh-token")
+                .uri("lb://memberservice/access-token")
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 //.bodyValue("{\"refreshToken\":\"" + refreshToken + "\"}")
-                .cookie("REFRESH_TOKNE", refreshToken)
+                .cookie("REFRESH_TOKEN", refreshToken)
                 .retrieve()
                 .bodyToMono(String.class)
                 .flatMap(newAccessToken -> {
                     // 새로운 액세스 토큰으로 필터체인에 재요청
                     ServerHttpRequest newRequest = exchange.getRequest().mutate()
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
+                            .header(HttpHeaders.AUTHORIZATION, newAccessToken)
                             .build();
                     return chain.filter(exchange.mutate().request(newRequest).build());
                 })
